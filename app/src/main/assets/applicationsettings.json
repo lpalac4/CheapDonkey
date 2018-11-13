@@ -1,0 +1,14 @@
+{
+  "taxiServices": [
+    {
+      "name": "Uber",
+      "token": "",
+      "apiUrl": "https://developer.uber.com/docs/riders/references/api/v1.2/estimates-price-get"
+    },
+    {
+      "name": "Lyft",
+      "token": "",
+      "apiUrl": "https://api.lyft.com/v1/cost"
+    }
+  ]
+}
