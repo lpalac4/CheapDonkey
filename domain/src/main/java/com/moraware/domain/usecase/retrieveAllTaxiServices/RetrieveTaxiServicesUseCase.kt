@@ -26,6 +26,7 @@ class RetrieveTaxiServicesUseCase : BaseUseCase<RetrieveTaxiServicesResponse>() 
         if(ApplicationServices.getInstance() == null)
             return Either.Left(RetrieveTaxiServicesFailure())
 
+
         return Either.Right(RetrieveTaxiServicesResponse())
     }
 }

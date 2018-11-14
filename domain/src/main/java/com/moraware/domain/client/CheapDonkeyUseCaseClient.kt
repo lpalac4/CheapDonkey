@@ -16,7 +16,6 @@ import kotlin.coroutines.experimental.CoroutineContext
 class CheapDonkeyUseCaseClient: IUseCaseClient {
 
     private lateinit var mCoroutineContext: CoroutineContext
-    private lateinit var mApplicationServices: ApplicationServices
 
     override fun observeOnThread(coroutineContext: CoroutineContext) {
         mCoroutineContext = coroutineContext
