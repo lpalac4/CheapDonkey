@@ -1,4 +1,7 @@
 package com.moraware.domain.usecase.searchlocation
 
-class SearchLocationRequest {
+import com.moraware.domain.usecase.base.BaseRequest
+
+class SearchLocationRequest: BaseRequest() {
+    var address: String? = ""
 }

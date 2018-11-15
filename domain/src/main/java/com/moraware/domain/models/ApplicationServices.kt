@@ -10,11 +10,6 @@ class ApplicationServices {
     @SerializedName("taxiServices")
     var taxiServices: List<TaxiService> = listOf()
 
-    data class TaxiService(
-            @SerializedName("name") val name: String = "",
-            @SerializedName("apiUrl") val apiUrl: String = "",
-            @SerializedName("token") val token: String = "")
-
     companion object {
         private var sInstance: ApplicationServices? = null
 

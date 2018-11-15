@@ -1,4 +1,4 @@
-package com.moraware.domain.usecase.retrieveAllTaxiServices
+package com.moraware.domain.usecase.retrievealltaxiservices
 
 import com.moraware.domain.utils.Failure
 

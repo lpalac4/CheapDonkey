@@ -4,14 +4,14 @@ import com.moraware.domain.utils.Either
 import com.moraware.domain.utils.Failure
 import java.util.*
 
-abstract class BaseUseCase<T> where T: BaseResponse {
+abstract class BaseUseCase<R, T, E> where R: BaseRequest, T: BaseResponse, E: Failure {
 
     val id: UUID = UUID.randomUUID()
 
-    var mRequest: BaseRequest? = null
-    var mResponse: BaseResponse? = null
+    lateinit var mRequest: R
+    lateinit var mResponse: T
 
-    abstract suspend fun run(): Either<Failure, T>
-    abstract fun createEmptyResponse(): BaseResponse
-    abstract fun createEmptyRequest(): BaseRequest
+    abstract suspend fun run(): Either<E, T>
+    abstract fun createEmptyResponse(): T
+    abstract fun createEmptyRequest(): R
 }
