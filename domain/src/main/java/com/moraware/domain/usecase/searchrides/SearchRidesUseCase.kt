@@ -1,18 +1,15 @@
 package com.moraware.domain.usecase.searchrides
 
 import com.moraware.domain.usecase.base.BaseUseCase
-import com.moraware.domain.utils.Either
+import com.moraware.domain.interactors.Either
 
-class SearchRidesUseCase: BaseUseCase<SearchRidesRequest, SearchRidesResponse, SearchRidesFailure>() {
-    override suspend fun run(): Either<SearchRidesFailure, SearchRidesResponse> {
+class SearchRidesUseCase(val destination: String, val latitude: Double?, val longitude: Double?) :
+        BaseUseCase<SearchRides, SearchRidesFailure>() {
+
+    override suspend fun run(): Either<SearchRidesFailure, SearchRides> {
+
+//        mRepository.searchForRides(mRequest.startAddress, mRequest.endLocationLatitude, mRequest.endLocationLongitude)
+
         return Either.Left(SearchRidesFailure())
-    }
-
-    override fun createEmptyResponse(): SearchRidesResponse {
-        return SearchRidesResponse()
-    }
-
-    override fun createEmptyRequest(): SearchRidesRequest {
-        return SearchRidesRequest()
     }
 }

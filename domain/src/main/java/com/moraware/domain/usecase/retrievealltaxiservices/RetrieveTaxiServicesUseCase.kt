@@ -2,28 +2,17 @@ package com.moraware.domain.usecase.retrievealltaxiservices
 
 import com.moraware.domain.models.ApplicationServices
 import com.moraware.domain.usecase.base.BaseUseCase
-import com.moraware.domain.utils.Either
+import com.moraware.domain.interactors.Either
 
-class RetrieveTaxiServicesUseCase : BaseUseCase<RetrieveTaxiServicesRequest, RetrieveTaxiServicesResponse, RetrieveTaxiServicesFailure>() {
+class RetrieveTaxiServicesUseCase : BaseUseCase<GetTaxiServices, GetTaxiServicesFailure>() {
 
-    init {
-        mRequest = createEmptyRequest()
-        mResponse = createEmptyResponse()
-    }
+    override suspend fun run(): Either<GetTaxiServicesFailure, GetTaxiServices> {
+        val applicationServices = ApplicationServices.getInstance() ?: return Either.Left(GetTaxiServicesFailure())
 
-    override fun createEmptyResponse(): RetrieveTaxiServicesResponse {
-        return RetrieveTaxiServicesResponse()
-    }
+        val taxiServices = applicationServices.taxiServices
 
-    override fun createEmptyRequest(): RetrieveTaxiServicesRequest {
-        return RetrieveTaxiServicesRequest()
-    }
-
-    override suspend fun run(): Either<RetrieveTaxiServicesFailure, RetrieveTaxiServicesResponse> {
-        val applicationServices = ApplicationServices.getInstance() ?: return Either.Left(RetrieveTaxiServicesFailure())
-
-        mResponse.taxiServices = applicationServices.taxiServices
-
-        return Either.Right(mResponse)
+        return taxiServices.isEmpty().let {
+            if(it) Either.Left(GetTaxiServicesFailure()) else Either.Right(GetTaxiServices(taxiServices))
+        }
     }
 }

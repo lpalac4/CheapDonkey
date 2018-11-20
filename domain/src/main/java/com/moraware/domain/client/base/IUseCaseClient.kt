@@ -1,10 +1,10 @@
 package com.moraware.domain.client.base
 
-import com.moraware.domain.usecase.base.BaseRequest
-import com.moraware.domain.usecase.base.BaseResponse
+import com.moraware.data.IDataRepository
+import com.moraware.domain.interactors.DomainResponse
+import com.moraware.domain.interactors.Either
+import com.moraware.domain.interactors.Failure
 import com.moraware.domain.usecase.base.BaseUseCase
-import com.moraware.domain.utils.Either
-import com.moraware.domain.utils.Failure
 import java.io.InputStream
 import kotlin.coroutines.experimental.CoroutineContext
 
@@ -16,6 +16,7 @@ interface IUseCaseClient {
 
     fun observeOnThread(coroutineContext: CoroutineContext)
 
-    fun <R: BaseRequest, T: BaseResponse, E: Failure> execute(onResult: (Either<E, T>) -> Unit, useCase: BaseUseCase<R, T, E>)
+    fun <T: DomainResponse, E: Failure> execute(onResult: (Either<E, T>) -> Unit, useCase: BaseUseCase<T, E>)
     fun addServices(inputStream: InputStream)
+    fun setRepository(repository: IDataRepository)
 }

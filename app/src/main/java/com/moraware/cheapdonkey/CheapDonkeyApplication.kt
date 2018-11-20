@@ -3,9 +3,9 @@ package com.moraware.cheapdonkey
 import android.app.Application
 import android.support.annotation.UiThread
 import com.moraware.cheapdonkey.dependencyinjection.application.ApplicationModule
-import com.moraware.cheapdonkey.dependencyinjection.application.DaggerIApplicationComponent
+import com.moraware.cheapdonkey.dependencyinjection.application.DaggerApplicationComponent
 import com.moraware.cheapdonkey.dependencyinjection.application.DomainDependencyModule
-import com.moraware.cheapdonkey.dependencyinjection.application.IApplicationComponent
+import com.moraware.cheapdonkey.dependencyinjection.application.ApplicationComponent
 import com.moraware.cheapdonkey.logger.CheapDonkeyLogger
 import dagger.Module
 import javax.inject.Inject
@@ -13,14 +13,14 @@ import javax.inject.Inject
 @Module
 class CheapDonkeyApplication : Application() {
 
-    lateinit var mApplicationComponent: IApplicationComponent
+    lateinit var mApplicationComponent: ApplicationComponent
 
     @Inject
     lateinit var mLogger: CheapDonkeyLogger
 
     override fun onCreate() {
         // instantiate component that will be used to inject on global scope here
-        mApplicationComponent = DaggerIApplicationComponent.builder()
+        mApplicationComponent = DaggerApplicationComponent.builder()
                 .applicationModule(ApplicationModule(this))
                 .domainDependencyModule(DomainDependencyModule(this))
                 .build()
@@ -33,7 +33,7 @@ class CheapDonkeyApplication : Application() {
     }
 
     @UiThread
-    fun getApplicationComponent(): IApplicationComponent {
+    fun getApplicationComponent(): ApplicationComponent {
         return mApplicationComponent
     }
 

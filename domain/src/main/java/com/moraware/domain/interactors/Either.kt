@@ -1,4 +1,4 @@
-package com.moraware.domain.utils
+package com.moraware.domain.interactors
 
 /**
  * Represents a value of one of two possible types (a disjoint union).

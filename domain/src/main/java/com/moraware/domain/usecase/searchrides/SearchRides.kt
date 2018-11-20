@@ -1,8 +1,8 @@
 package com.moraware.domain.usecase.searchrides
 
 import com.moraware.domain.models.Ride
-import com.moraware.domain.usecase.base.BaseResponse
+import com.moraware.domain.interactors.DomainResponse
 
-class SearchRidesResponse: BaseResponse() {
+class SearchRides: DomainResponse() {
     val rides: List<Ride> = listOf()
 }

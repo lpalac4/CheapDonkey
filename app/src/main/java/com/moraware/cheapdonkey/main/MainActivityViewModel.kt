@@ -8,14 +8,14 @@ import com.moraware.cheapdonkey.base.BaseViewModel
 import com.moraware.cheapdonkey.util.SingleLiveEvent
 import com.moraware.domain.models.Ride
 import com.moraware.domain.models.TaxiService
-import com.moraware.domain.usecase.retrievealltaxiservices.RetrieveTaxiServicesFailure
-import com.moraware.domain.usecase.retrievealltaxiservices.RetrieveTaxiServicesResponse
+import com.moraware.domain.usecase.retrievealltaxiservices.GetTaxiServicesFailure
+import com.moraware.domain.usecase.retrievealltaxiservices.GetTaxiServices
 import com.moraware.domain.usecase.retrievealltaxiservices.RetrieveTaxiServicesUseCase
 import com.moraware.domain.usecase.searchlocation.SearchLocationFailure
-import com.moraware.domain.usecase.searchlocation.SearchLocationResponse
+import com.moraware.domain.usecase.searchlocation.SearchLocations
 import com.moraware.domain.usecase.searchlocation.SearchLocationUseCase
 import com.moraware.domain.usecase.searchrides.SearchRidesFailure
-import com.moraware.domain.usecase.searchrides.SearchRidesResponse
+import com.moraware.domain.usecase.searchrides.SearchRides
 import com.moraware.domain.usecase.searchrides.SearchRidesUseCase
 import java.util.logging.Level
 
@@ -79,14 +79,14 @@ class MainActivityViewModel : BaseViewModel() {
     /**
      * On activity start we will make sure ride sharing services are available
      */
-    private fun onRetrieveTaxiServicesSuccess(response: RetrieveTaxiServicesResponse) {
+    private fun onRetrieveTaxiServicesSuccess(response: GetTaxiServices) {
         setProcessing(false)
 
         taxiServices.value = response.taxiServices
         setTaxiServicesReadyForQuery(true)
     }
 
-    private fun onRetrieveTaxiServicesFailure(failure: RetrieveTaxiServicesFailure) {
+    private fun onRetrieveTaxiServicesFailure(failure: GetTaxiServicesFailure) {
         setProcessing(false)
         setHasError(true)
         setErrorMessage("Your requested destination was not found.")
@@ -100,12 +100,11 @@ class MainActivityViewModel : BaseViewModel() {
         mLogger.log(Level.FINE, "Searching for requested address.")
         setSearchingDestination(true)
 
-        var useCase = SearchLocationUseCase()
-        useCase.mRequest.address = address
+        var useCase = SearchLocationUseCase(address)
         mUseCaseClient.execute({ it.either(::onSearchAddressDestinationFailure, ::onSearchAddressDestinationSuccess)}, useCase)
     }
 
-    private fun onSearchAddressDestinationSuccess(response: SearchLocationResponse) {
+    private fun onSearchAddressDestinationSuccess(response: SearchLocations) {
         setSearchingDestination(false)
         possibleDestinations.value = response.possibleAddresses
     }
@@ -160,14 +159,11 @@ class MainActivityViewModel : BaseViewModel() {
         mLogger.log(Level.FINE, "Searching for ride estimates.")
         setSearchingRides(true)
 
-        var useCase = SearchRidesUseCase()
-        useCase.mRequest.startAddress = destination
-        useCase.mRequest.endLocationLatitude = mLocation?.latitude
-        useCase.mRequest.endLocationLongitude = mLocation?.longitude
+        var useCase = SearchRidesUseCase(destination, mLocation?.latitude, mLocation?.longitude)
         mUseCaseClient.execute({ it.either(::onSearchRideEstimatesFailure, ::onSearchRideEstimatesSuccess)}, useCase)
     }
 
-    private fun onSearchRideEstimatesSuccess(response: SearchRidesResponse) {
+    private fun onSearchRideEstimatesSuccess(response: SearchRides) {
         setSearchingRides(false)
         rides.value = response.rides
     }

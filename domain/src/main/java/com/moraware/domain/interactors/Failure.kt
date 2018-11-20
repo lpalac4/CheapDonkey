@@ -1,4 +1,4 @@
-package com.moraware.domain.utils
+package com.moraware.domain.interactors
 
 /**
  * Base Class for handling errors/failures/exceptions.

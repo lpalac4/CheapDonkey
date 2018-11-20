@@ -7,7 +7,7 @@ import com.moraware.cheapdonkey.dependencyinjection.controller.ControllerModule
 import dagger.Component
 
 /**
- * This DI component will be in charged of dependency injection at a global level, together with @ApplicationScope,
+ * This DI component will be in charged of dependency injection at a global level, together with @ApplicationDomainScope,
  * this is effectively telling Dagger to use a single instance of these objects.
  *
  * Add more modules within this same package that will benefit from sharing injected objects. For example
@@ -21,7 +21,7 @@ import dagger.Component
             DomainDependencyModule::class
         ]
 )
-interface IApplicationComponent {
+interface ApplicationComponent {
 
     /** Objects gettings their dependencies injected from this global level**/
     fun inject(application: CheapDonkeyApplication)
