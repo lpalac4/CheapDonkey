@@ -3,28 +3,26 @@ package com.moraware.cheapdonkey.main
 import android.arch.lifecycle.MutableLiveData
 import android.databinding.Bindable
 import android.location.Location
+import com.google.android.gms.maps.model.LatLng
 import com.moraware.cheapdonkey.BR
 import com.moraware.cheapdonkey.base.BaseViewModel
 import com.moraware.cheapdonkey.util.SingleLiveEvent
 import com.moraware.domain.models.Ride
-import com.moraware.domain.models.TaxiService
-import com.moraware.domain.usecase.retrievealltaxiservices.GetTaxiServicesFailure
+import com.moraware.domain.models.Taxi
 import com.moraware.domain.usecase.retrievealltaxiservices.GetTaxiServices
+import com.moraware.domain.usecase.retrievealltaxiservices.GetTaxiServicesFailure
 import com.moraware.domain.usecase.retrievealltaxiservices.RetrieveTaxiServicesUseCase
-import com.moraware.domain.usecase.searchlocation.SearchLocationFailure
-import com.moraware.domain.usecase.searchlocation.SearchLocations
-import com.moraware.domain.usecase.searchlocation.SearchLocationUseCase
-import com.moraware.domain.usecase.searchrides.SearchRidesFailure
 import com.moraware.domain.usecase.searchrides.SearchRides
+import com.moraware.domain.usecase.searchrides.SearchRidesFailure
 import com.moraware.domain.usecase.searchrides.SearchRidesUseCase
 import java.util.logging.Level
 
 class MainActivityViewModel : BaseViewModel() {
 
-    var taxiServices: MutableLiveData<List<TaxiService>> = MutableLiveData()
-    var possibleDestinations: MutableLiveData<List<String>> = MutableLiveData()
+    var taxiServices: MutableLiveData<List<Taxi>> = MutableLiveData()
     var rides: MutableLiveData<List<Ride>> = MutableLiveData()
-
+    var destination: String = ""
+    private var destinationLatLng: LatLng? = null
     var mLocation: Location? = null
 
     private var mTaxiServicesReadyForQuery: Boolean = false
@@ -38,19 +36,6 @@ class MainActivityViewModel : BaseViewModel() {
         if(mTaxiServicesReadyForQuery != value){
             mTaxiServicesReadyForQuery = value
             notifyPropertyChanged(BR.taxiServicesReadyForQuery)
-        }
-    }
-
-    private var mSearchingDestination: Boolean = false
-
-    @Bindable
-    fun isSearchingDestination(): Boolean {
-        return mSearchingDestination
-    }
-    fun setSearchingDestination(value: Boolean) {
-        if(mSearchingDestination != value){
-            mSearchingDestination = value
-            notifyPropertyChanged(BR.searchingDestination)
         }
     }
 
@@ -84,33 +69,11 @@ class MainActivityViewModel : BaseViewModel() {
 
         taxiServices.value = response.taxiServices
         setTaxiServicesReadyForQuery(true)
+        getCurrentLocation()
     }
 
     private fun onRetrieveTaxiServicesFailure(failure: GetTaxiServicesFailure) {
         setProcessing(false)
-        setHasError(true)
-        setErrorMessage("Your requested destination was not found.")
-    }
-
-    /**
-     * Once the user enters a destination address into the search box we will query for the most accurate
-     * possible addresses.
-     */
-    fun searchDestination(address: String?) {
-        mLogger.log(Level.FINE, "Searching for requested address.")
-        setSearchingDestination(true)
-
-        var useCase = SearchLocationUseCase(address)
-        mUseCaseClient.execute({ it.either(::onSearchAddressDestinationFailure, ::onSearchAddressDestinationSuccess)}, useCase)
-    }
-
-    private fun onSearchAddressDestinationSuccess(response: SearchLocations) {
-        setSearchingDestination(false)
-        possibleDestinations.value = response.possibleAddresses
-    }
-
-    private fun onSearchAddressDestinationFailure(failure: SearchLocationFailure) {
-        setSearchingDestination(false)
         setHasError(true)
         setErrorMessage("Your requested destination was not found.")
     }
@@ -155,11 +118,21 @@ class MainActivityViewModel : BaseViewModel() {
         }
     }
 
-    fun onFinalDestinationSelected(destination: String) {
+    fun onFinalDestinationSelected(destination: String, latLng: LatLng) {
         mLogger.log(Level.FINE, "Searching for ride estimates.")
         setSearchingRides(true)
 
-        var useCase = SearchRidesUseCase(destination, mLocation?.latitude, mLocation?.longitude)
+        this.destination = destination
+        this.destinationLatLng = latLng
+    }
+
+    fun searchRides() {
+        if(destination == "" || mLocation == null) {
+            setErrorMessage("Cannot search rides without knowing destination and current location: \n destination: $destination \n location: $mLocation")
+            mLogger.log(Level.FINE, "Cannot search rides without knowing destination and current location: \n destination: $destination \n location: $mLocation")
+        }
+
+        var useCase = SearchRidesUseCase(destination, destinationLatLng?.latitude, destinationLatLng?.longitude, mLocation?.latitude, mLocation?.longitude)
         mUseCaseClient.execute({ it.either(::onSearchRideEstimatesFailure, ::onSearchRideEstimatesSuccess)}, useCase)
     }
 

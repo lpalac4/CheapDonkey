@@ -11,15 +11,20 @@ import android.location.Location
 import android.location.LocationManager
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import com.google.android.gms.common.api.Status
+import com.google.android.gms.location.places.Place
+import com.google.android.gms.location.places.ui.PlaceSelectionListener
+import com.google.android.gms.location.places.ui.SupportPlaceAutocompleteFragment
 import com.moraware.cheapdonkey.R
-import com.moraware.cheapdonkey.base.BaseActivity
+import com.moraware.cheapdonkey.base.ViewModelActivity
 import com.moraware.cheapdonkey.databinding.ActivityMainBinding
+import java.util.logging.Level
 
 
-class MainActivity : BaseActivity<MainActivityViewModel>() {
+class MainActivity : ViewModelActivity<MainActivityViewModel>() {
     private lateinit var binding: ActivityMainBinding
 
-    private val PERMISSIONS_LOCATION_CODE: Int = 11142018
+    private val PERMISSIONS_LOCATION_CODE: Int = 1114
     private var mLocation: Location? = null
 
     override fun setupUIAndBindViewModel() {
@@ -41,6 +46,25 @@ class MainActivity : BaseActivity<MainActivityViewModel>() {
         })
 
         verifyLocationPermission()
+        setupPlaceAutocomplete()
+    }
+
+    private fun setupPlaceAutocomplete() {
+        if (supportFragmentManager.findFragmentById(R.id.place_autocomplete_fragment) == null) return
+
+        val autocompleteFragment = supportFragmentManager.findFragmentById(R.id.place_autocomplete_fragment) as SupportPlaceAutocompleteFragment
+        autocompleteFragment.setHint(resources.getString(R.string.main_destination_hint))
+
+        autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
+            override fun onPlaceSelected(place: Place) {
+                mLogger.log(Level.FINE, "Place: " + place.name)
+                mViewModel.onFinalDestinationSelected(place.name.toString(), place.latLng)
+            }
+
+            override fun onError(status: Status) {
+                mLogger.log(Level.FINE, "An error occurred: $status")
+            }
+        })
     }
 
     private fun verifyLocationPermission() {

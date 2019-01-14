@@ -12,7 +12,8 @@ import java.util.logging.Logger
 
 abstract class BaseUseCase<T, E> where T: DomainResponse, E: Failure {
 
-    protected var mRepository: IDataRepository = DomainDependencyProvider.getDataRepository()
+    private var mRepository: IDataRepository = DomainDependencyProvider.getDataRepository()
+    @Synchronized fun getRepository(): IDataRepository { return mRepository }
     protected var mLogger: Logger? = DomainDependencyProvider.getLogger()
 
     protected val id: UUID = UUID.randomUUID()

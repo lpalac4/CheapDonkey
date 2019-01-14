@@ -6,11 +6,9 @@ import com.moraware.domain.client.base.IUseCaseClient
 import com.moraware.domain.interactors.DomainResponse
 import com.moraware.domain.interactors.Either
 import com.moraware.domain.interactors.Failure
-import com.moraware.domain.models.ApplicationServices
+import com.moraware.data.models.ApplicationServices
 import com.moraware.domain.usecase.base.BaseUseCase
-import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
 import java.io.InputStream
 import java.util.logging.Logger
 import kotlin.coroutines.experimental.CoroutineContext
@@ -34,7 +32,7 @@ class CheapDonkeyUseCaseClient: IUseCaseClient {
 
     @Synchronized override fun <T : DomainResponse, E: Failure> execute(onResult: (Either<E, T>) -> Unit, useCase: BaseUseCase<T, E>) {
         mCoroutineContext.let {
-            async(CommonPool) {
+            async(mCoroutineContext) {
                 useCase.setCallback(onResult)
                 useCase.run()
             }
@@ -44,7 +42,8 @@ class CheapDonkeyUseCaseClient: IUseCaseClient {
         }
     }
 
-    override fun addServices(inputStream: InputStream) {
+    override fun addServices(inputStream: InputStream, debug: Boolean) {
         ApplicationServices.initialize(inputStream)
+        DomainDependencyProvider.getDataRepository().initializeServices(ApplicationServices.getInstance(), debug)
     }
 }

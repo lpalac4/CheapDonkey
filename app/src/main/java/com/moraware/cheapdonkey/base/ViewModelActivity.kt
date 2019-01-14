@@ -1,28 +1,34 @@
 package com.moraware.cheapdonkey.base
 
+import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.annotation.UiThread
 import android.support.v7.app.AppCompatActivity
+import android.widget.Toast
 import com.moraware.cheapdonkey.CheapDonkeyApplication
 import com.moraware.cheapdonkey.dependencyinjection.controller.ControllerModule
 import com.moraware.cheapdonkey.dependencyinjection.controller.IControllerComponent
 import com.moraware.cheapdonkey.logger.CheapDonkeyLogger
 import javax.inject.Inject
 
-abstract class BaseActivity: AppCompatActivity() {
+abstract class ViewModelActivity<T: BaseViewModel>: BaseActivity() {
+
+    protected lateinit var mViewModel: T
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        getControllerComponent().inject(this)
+
+        setupUIAndBindViewModel()
     }
 
-    @Inject
-    lateinit var mLogger: CheapDonkeyLogger
+    abstract fun setupUIAndBindViewModel()
 
-    @UiThread
-    fun getControllerComponent(): IControllerComponent {
-        return (application as CheapDonkeyApplication)
-                .getApplicationComponent()
-                .newControllerComponent(ControllerModule(this))
+    override fun onStart() {
+        super.onStart()
+        mViewModel.loadData()
+
+        mViewModel.getErrorMessage().observe(this, Observer {
+            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+        })
     }
 }

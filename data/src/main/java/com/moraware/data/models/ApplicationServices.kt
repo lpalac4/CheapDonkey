@@ -1,4 +1,4 @@
-package com.moraware.domain.models
+package com.moraware.data.models
 
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
@@ -9,6 +9,9 @@ class ApplicationServices {
 
     @SerializedName("taxiServices")
     var taxiServices: List<TaxiService> = listOf()
+
+    @SerializedName("locationAPIKey")
+    var locationAPIKey: String = ""
 
     companion object {
         private var sInstance: ApplicationServices? = null

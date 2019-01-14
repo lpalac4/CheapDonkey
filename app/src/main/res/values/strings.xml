@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">CheapDonkey</string>
+    <string name="main_destination_hint">Enter your destination.</string>
+    <string name="search_fares">Search fares</string>
 </resources>

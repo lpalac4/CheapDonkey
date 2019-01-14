@@ -1,6 +1,6 @@
 package com.moraware.cheapdonkey.dependencyinjection.controller
 
-import android.support.v7.app.AppCompatActivity
+import com.moraware.cheapdonkey.base.BaseActivity
 import dagger.Subcomponent
 
 /** Marking this component as a Subcomponent will grant it access to parent component **/
@@ -12,5 +12,5 @@ import dagger.Subcomponent
 interface IControllerComponent {
 
     /** Objects gettings their dependencies injected **/
-    fun inject(activity: AppCompatActivity)
+    fun inject(activity: BaseActivity)
 }

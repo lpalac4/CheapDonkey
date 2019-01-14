@@ -17,6 +17,6 @@ interface IUseCaseClient {
     fun observeOnThread(coroutineContext: CoroutineContext)
 
     fun <T: DomainResponse, E: Failure> execute(onResult: (Either<E, T>) -> Unit, useCase: BaseUseCase<T, E>)
-    fun addServices(inputStream: InputStream)
+    fun addServices(inputStream: InputStream, debug: Boolean)
     fun setRepository(repository: IDataRepository)
 }

@@ -1,5 +1,6 @@
 package com.moraware.cheapdonkey.base
 
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.databinding.Bindable
 import android.databinding.Observable
@@ -7,6 +8,7 @@ import android.databinding.PropertyChangeRegistry
 import com.moraware.cheapdonkey.BR
 import com.moraware.cheapdonkey.CheapDonkeyApplication
 import com.moraware.cheapdonkey.logger.CheapDonkeyLogger
+import com.moraware.cheapdonkey.util.SingleLiveEvent
 import com.moraware.domain.client.base.IUseCaseClient
 import javax.inject.Inject
 
@@ -65,16 +67,11 @@ abstract class BaseViewModel : ViewModel(), Observable {
     }
 
     private var mHasError: Boolean = false
-    private var mErrorMessage: String = ""
+    private var mErrorMessage: SingleLiveEvent<String> = SingleLiveEvent()
 
     @Bindable
     fun getHasError() : Boolean {
         return mHasError
-    }
-
-    @Bindable
-    fun getErrorMessage() : String {
-        return mErrorMessage
     }
 
     fun setHasError(value : Boolean) {
@@ -85,11 +82,12 @@ abstract class BaseViewModel : ViewModel(), Observable {
         }
     }
 
+    fun getErrorMessage() : MutableLiveData<String> {
+        return mErrorMessage
+    }
+
     fun setErrorMessage(value : String) {
-        if(!mErrorMessage.equals(value)) {
-            mErrorMessage = value
-            notifyPropertyChanged(BR.errorMessage)
-        }
+        mErrorMessage.value = value
     }
 
     abstract fun loadData()

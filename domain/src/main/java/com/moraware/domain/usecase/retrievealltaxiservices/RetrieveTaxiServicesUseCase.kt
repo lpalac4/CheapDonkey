@@ -1,18 +1,21 @@
 package com.moraware.domain.usecase.retrievealltaxiservices
 
-import com.moraware.domain.models.ApplicationServices
-import com.moraware.domain.usecase.base.BaseUseCase
+import com.moraware.domain.mappers.TaxiMapper
+import com.moraware.data.models.ApplicationServices
 import com.moraware.domain.interactors.Either
+import com.moraware.domain.usecase.base.BaseUseCase
 
 class RetrieveTaxiServicesUseCase : BaseUseCase<GetTaxiServices, GetTaxiServicesFailure>() {
 
-    override suspend fun run(): Either<GetTaxiServicesFailure, GetTaxiServices> {
-        val applicationServices = ApplicationServices.getInstance() ?: return Either.Left(GetTaxiServicesFailure())
+    override suspend fun run() {
+        val applicationServices = ApplicationServices.getInstance()
+        val taxiServices = applicationServices?.taxiServices
 
-        val taxiServices = applicationServices.taxiServices
-
-        return taxiServices.isEmpty().let {
-            if(it) Either.Left(GetTaxiServicesFailure()) else Either.Right(GetTaxiServices(taxiServices))
+        if(taxiServices == null || taxiServices.isEmpty()) {
+            mCallbackHandler?.invoke(Either.Left(GetTaxiServicesFailure()))
+        }
+        else {
+            mCallbackHandler?.invoke(Either.Right(GetTaxiServices(TaxiMapper().transform(taxiServices))))
         }
     }
 }

@@ -5,9 +5,10 @@ import com.moraware.data.interactors.Callback
 import com.moraware.data.models.SearchLocationRequest
 import com.moraware.data.models.SearchLocationResponse
 import com.moraware.domain.interactors.Either
+import com.moraware.domain.mappers.DestinationMapper
 import com.moraware.domain.usecase.base.BaseUseCase
 
-class SearchLocationUseCase(val address: String?) : BaseUseCase<SearchLocations, SearchLocationFailure>() {
+class SearchLocationUseCase(val searchQuery: String) : BaseUseCase<SearchLocations, SearchLocationFailure>() {
 
     private val callback = object : Callback<SearchLocationResponse> {
         override fun onFailure(exception: WebServiceException) {
@@ -16,13 +17,14 @@ class SearchLocationUseCase(val address: String?) : BaseUseCase<SearchLocations,
 
         override fun onSuccess(response: SearchLocationResponse) {
             super.onSuccess(response)
-            mCallbackHandler?.invoke(Either.Right(SearchLocations()))
+            val destinations = DestinationMapper().transform(response)
+            mCallbackHandler?.invoke(Either.Right(SearchLocations(destinations)))
         }
     }
 
     override suspend fun run() {
         var request = SearchLocationRequest()
-        request.address = address
-        mRepository.searchLocation(request,  callback)
+        request.address = searchQuery
+        getRepository().searchLocation(request, callback)
     }
 }

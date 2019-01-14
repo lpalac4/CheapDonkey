@@ -27,7 +27,7 @@ interface ApplicationComponent {
     fun inject(application: CheapDonkeyApplication)
     fun inject(application: BaseViewModel)
 
-    /** components that will injection to different Android Frameworks objects **/
+    /** components that will inject to different Android Frameworks objects **/
     fun newControllerComponent(controllerModule: ControllerModule) : IControllerComponent
 
 }
