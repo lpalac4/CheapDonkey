@@ -10,5 +10,5 @@ interface UberService {
     fun getRideEstimate(@Query("start_latitude") startLat: Float,
             @Query("start_longitude") startLng: Float,
             @Query("end_latitude") endLat: Float,
-            @Query("end_longitude") endLng: Float): Call<List<Prices>>
+            @Query("end_longitude") endLng: Float): Call<List<Price>>
 }

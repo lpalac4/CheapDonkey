@@ -10,5 +10,5 @@ interface LyftService {
     fun getRideEstimate(@Query("start_lat") startLat: Float,
                         @Query("start_lng") startLng: Float,
                         @Query("end_lat") endLat: Float,
-                        @Query("end_lng") endLng: Float): Call<List<CostEstimates>>
+                        @Query("end_lng") endLng: Float): Call<List<CostEstimate>>
 }

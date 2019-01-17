@@ -5,6 +5,11 @@ import com.moraware.domain.models.Ride
 
 class RideMapper {
     fun transform(response: SearchRidesResponse): List<Ride> {
-        return listOf()
+        var domainRides : ArrayList<Ride> = arrayListOf()
+        response.rides.sortedBy { it.fare }.forEach {
+            domainRides.add(Ride(it.name, it.fare, it.company))
+        }
+
+        return domainRides
     }
 }
