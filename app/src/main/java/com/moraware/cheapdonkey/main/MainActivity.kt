@@ -31,8 +31,9 @@ class MainActivity : ViewModelActivity<MainActivityViewModel>() {
         mViewModel = ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.viewModel = mViewModel
-        mViewModel.taxiServices.observe(this, Observer { it ->
+        binding.taxiServicesRecyclerview.adapter = MainActivityTaxiRidesAdapter(arrayListOf(), mViewModel)
 
+        mViewModel.taxiServices.observe(this, Observer { it ->
             it?.let {
                 for(taxiServices in it) {
                     // fill image views with proper service info
@@ -43,6 +44,10 @@ class MainActivity : ViewModelActivity<MainActivityViewModel>() {
         mViewModel._getCurrentLocation.observe(this, Observer {
             getLastLocation()
             mViewModel.setCurrentLocation(mLocation)
+        })
+
+        mViewModel.rides.observe(this, Observer { it ->
+            it?.let {(binding.taxiServicesRecyclerview.adapter as MainActivityTaxiRidesAdapter).setRides(it)}
         })
 
         verifyLocationPermission()

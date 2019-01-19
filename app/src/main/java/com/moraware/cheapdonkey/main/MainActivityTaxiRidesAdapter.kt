@@ -1,24 +1,26 @@
 package com.moraware.cheapdonkey.main
 
-import android.support.v7.widget.RecyclerView
-import android.view.ViewGroup
+import com.morasoftware.mango.bindingadapters.BaseRecyclerviewDataBindingAdapter
+import com.moraware.cheapdonkey.R
+import com.moraware.cheapdonkey.base.BaseViewModel
 import com.moraware.domain.models.Ride
 
-class MainActivityTaxiRidesAdapter(private var ridesAvailable: List<Ride>) : RecyclerView.Adapter<MainActivityTaxiRidesAdapter.TaxiServiceViewHolder>() {
+class MainActivityTaxiRidesAdapter(private var ridesAvailable: ArrayList<Ride>, viewModel: BaseViewModel) : BaseRecyclerviewDataBindingAdapter(viewModel) {
+    override fun getObjForPosition(position: Int): Any {
+        return ridesAvailable[position]
+    }
 
-    override fun onCreateViewHolder(viewGroup: ViewGroup, pos: Int): TaxiServiceViewHolder {
-
-        return TaxiServiceViewHolder(viewGroup, ridesAvailable[pos])
+    override fun getLayoutIdForPosition(position: Int): Int {
+        return R.layout.main_adapter_rides
     }
 
     override fun getItemCount(): Int {
         return 0
     }
 
-    override fun onBindViewHolder(p0: TaxiServiceViewHolder, p1: Int) {
-
+    fun setRides(newRides: List<Ride>) {
+        ridesAvailable.clear()
+        ridesAvailable.addAll(newRides)
+        notifyDataSetChanged()
     }
-
-    data class TaxiServiceViewHolder(val viewGroup: ViewGroup,
-                                     val ride: Ride) : RecyclerView.ViewHolder(viewGroup)
 }

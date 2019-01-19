@@ -6,7 +6,7 @@ import retrofit2.http.Query
 
 interface LyftService {
 
-    @GET("/v1/cost/")
+    @GET("v1/cost/")
     fun getRideEstimate(@Query("start_lat") startLat: Float,
                         @Query("start_lng") startLng: Float,
                         @Query("end_lat") endLat: Float,
