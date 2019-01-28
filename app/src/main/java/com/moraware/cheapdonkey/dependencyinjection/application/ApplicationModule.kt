@@ -9,17 +9,17 @@ import dagger.Provides
  * In this module we define the dependencies that are injected at a global scope
  */
 @Module
-class ApplicationModule(val application: CheapDonkeyApplication) {
+open class ApplicationModule(val application: CheapDonkeyApplication = CheapDonkeyApplication()) {
 
     @Provides
     @ApplicationScope
-    fun provideApplication() : CheapDonkeyApplication {
+    open fun provideApplication() : CheapDonkeyApplication {
         return application
     }
 
     @Provides
     @ApplicationScope
-    fun provideLogger() : CheapDonkeyLogger {
+    open fun provideLogger() : CheapDonkeyLogger {
         return CheapDonkeyLogger("CDLogger", null)
     }
 }

@@ -15,7 +15,7 @@ class MainActivityTaxiRidesAdapter(private var ridesAvailable: ArrayList<Ride>, 
     }
 
     override fun getItemCount(): Int {
-        return 0
+        return ridesAvailable.size
     }
 
     fun setRides(newRides: List<Ride>) {

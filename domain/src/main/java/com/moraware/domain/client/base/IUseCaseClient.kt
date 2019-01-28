@@ -1,6 +1,7 @@
 package com.moraware.domain.client.base
 
 import com.moraware.data.IDataRepository
+import com.moraware.data.base.BaseResponse
 import com.moraware.domain.interactors.DomainResponse
 import com.moraware.domain.interactors.Either
 import com.moraware.domain.interactors.Failure

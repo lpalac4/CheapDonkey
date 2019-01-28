@@ -12,13 +12,14 @@ class SearchLocationUseCase(val searchQuery: String) : BaseUseCase<SearchLocatio
 
     private val callback = object : Callback<SearchLocationResponse> {
         override fun onFailure(exception: WebServiceException) {
-            mCallbackHandler?.invoke(Either.Left(SearchLocationFailure()))
+            val result = Either.Left(SearchLocationFailure())
+            postToMainThread(result)
         }
 
         override fun onSuccess(response: SearchLocationResponse) {
-            super.onSuccess(response)
             val destinations = DestinationMapper().transform(response)
-            mCallbackHandler?.invoke(Either.Right(SearchLocations(destinations)))
+            val result = Either.Right(SearchLocations(destinations))
+            postToMainThread(result)
         }
     }
 

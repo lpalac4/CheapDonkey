@@ -25,7 +25,7 @@ interface ApplicationComponent {
 
     /** Objects gettings their dependencies injected from this global level**/
     fun inject(application: CheapDonkeyApplication)
-    fun inject(application: BaseViewModel)
+    fun inject(viewModel: BaseViewModel)
 
     /** components that will inject to different Android Frameworks objects **/
     fun newControllerComponent(controllerModule: ControllerModule) : IControllerComponent

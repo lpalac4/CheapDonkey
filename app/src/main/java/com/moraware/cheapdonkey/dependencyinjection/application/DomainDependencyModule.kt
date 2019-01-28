@@ -1,6 +1,7 @@
 package com.moraware.cheapdonkey.dependencyinjection.application
 
 import android.os.Handler
+import android.os.Looper
 import com.moraware.cheapdonkey.BuildConfig
 import com.moraware.cheapdonkey.CheapDonkeyApplication
 import com.moraware.domain.client.CheapDonkeyUseCaseClient
@@ -13,14 +14,14 @@ import kotlinx.coroutines.experimental.android.HandlerContext
  * This module will hold domain project dependencies injected throughout the app
  */
 @Module
-class DomainDependencyModule(val application: CheapDonkeyApplication) {
+open class DomainDependencyModule(val application: CheapDonkeyApplication = CheapDonkeyApplication()) {
 
     @Provides
     @ApplicationScope
-    fun providesUseCaseClient(application: CheapDonkeyApplication) : IUseCaseClient {
+    open fun providesUseCaseClient(application: CheapDonkeyApplication) : IUseCaseClient {
         val client = CheapDonkeyUseCaseClient()
-        client.observeOnThread(HandlerContext(Handler()))
-        client.addServices(application.resources.assets.open("applicationsettings.json"), BuildConfig.DEBUG)
+        client.observeOnThread(HandlerContext(Handler(Looper.getMainLooper())))
+//        client.addServices(application.resources.assets.open("applicationsettings.json"), BuildConfig.DEBUG)
         return client
     }
 }

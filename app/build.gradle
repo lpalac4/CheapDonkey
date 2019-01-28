@@ -26,6 +26,10 @@ android {
     dataBinding {
         enabled = true
     }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -50,11 +54,22 @@ dependencies {
 
     /** dagger 2 **/
     implementation 'com.google.dagger:dagger:2.17'
-    // for support libraries
-    implementation 'com.google.dagger:dagger-android-support:2.17'
-    // to inject activities and fragments or android components
-    implementation 'com.google.dagger:dagger-android:2.17'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.17'
+
     kapt 'com.google.dagger:dagger-android-processor:2.17'
-    // to use dagger with kotlin
     kapt 'com.google.dagger:dagger-compiler:2.17'
+
+//    // for support libraries
+//    implementation 'com.google.dagger:dagger-android-support:2.17'
+//    // to inject activities and fragments or android components
+//    implementation 'com.google.dagger:dagger-android:2.17'
+//    kapt 'com.google.dagger:dagger-android-processor:2.17'
+//    // to use dagger with kotlin
+//    kapt 'com.google.dagger:dagger-compiler:2.17'
+
+    /** testing **/
+    testImplementation 'android.arch.core:core-testing:1.1.1'  //Keep this inline with architecture components
+    testImplementation project(path: ':data')
+    kaptTest 'com.google.dagger:dagger-compiler:2.17'
+    kaptAndroidTest 'com.google.dagger:dagger-compiler:2.17'
 }

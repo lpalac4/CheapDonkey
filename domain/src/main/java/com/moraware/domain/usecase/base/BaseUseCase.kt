@@ -1,14 +1,14 @@
 package com.moraware.domain.usecase.base
 
 import com.moraware.data.IDataRepository
-import com.moraware.data.base.BaseResponse
-import com.moraware.data.interactors.Callback
 import com.moraware.domain.client.DomainDependencyProvider
 import com.moraware.domain.interactors.DomainResponse
 import com.moraware.domain.interactors.Either
 import com.moraware.domain.interactors.Failure
+import kotlinx.coroutines.experimental.launch
 import java.util.*
 import java.util.logging.Logger
+import kotlin.coroutines.experimental.CoroutineContext
 
 abstract class BaseUseCase<T, E> where T: DomainResponse, E: Failure {
 
@@ -18,18 +18,31 @@ abstract class BaseUseCase<T, E> where T: DomainResponse, E: Failure {
 
     protected val id: UUID = UUID.randomUUID()
 
-//    protected lateinit var mRequest: R
-//    protected lateinit var mResponse: T
-
     abstract suspend fun run()
 
-    protected var mCallbackHandler: ((Either<E, T>) -> Unit)? = null
+    private var mCallback: ((Either<E, T>) -> Unit)? = null
     fun setCallback(onResult: (Either<E, T>) -> Unit) {
-        mCallbackHandler = onResult
+        mCallback = onResult
     }
 
-//    abstract fun getCallback(): Callback<R>
+    private var mContext: CoroutineContext? = null
+    @Synchronized
+    fun getMainLooper(): CoroutineContext? {
+        return mContext
+    }
+    fun setMainLooper(context: CoroutineContext) {
+        mContext = context
+    }
 
-//    abstract fun createEmptyResponse(): T
-//    abstract fun createEmptyRequest(): R
+    fun postToMainThread(result: Either.Left<E>) {
+        getMainLooper()?.let {
+            launch(it) { mCallback?.invoke(result) }
+        }
+    }
+
+    fun postToMainThread(result: Either.Right<T>) {
+        getMainLooper()?.let {
+            launch(it) { mCallback?.invoke(result)}
+        }
+    }
 }

@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">CheapDonkey</string>
     <string name="main_destination_hint">Enter your destination.</string>
-    <string name="search_fares">Search fares</string>
+    <string name="search_fares">Find a donkey</string>
+    <string name="lyft_package_id">me.lyft.android</string>
+    <string name="uber_package_id">com.ubercab</string>
 </resources>

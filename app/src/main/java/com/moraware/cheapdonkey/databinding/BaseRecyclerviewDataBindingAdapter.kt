@@ -41,9 +41,9 @@ abstract class BaseRecyclerviewDataBindingAdapter(viewModel: BaseViewModel) : Re
 
     inner class BaseDataBindingHolder(private val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(obj: Any, actionHandler: BaseViewModel) {
+        fun bind(obj: Any, viewModel: BaseViewModel) {
             binding.setVariable(BR.obj, obj)
-            binding.setVariable(BR.viewModel, actionHandler)
+            binding.setVariable(BR.viewModel, viewModel)
             binding.executePendingBindings()
         }
     }

@@ -24,9 +24,6 @@ class CheapDonkeyRepository: IDataRepository {
     private lateinit var mSettings: ApplicationServices
 
     lateinit var client: OkHttpClient
-    lateinit var googleRetrofit: Retrofit
-    lateinit var lyftRetrofit: Retrofit
-    lateinit var uberRetrofit: Retrofit
     lateinit var placesService: GooglePlacesService
     lateinit var lyftService: LyftService
     lateinit var uberService: UberService
@@ -46,7 +43,7 @@ class CheapDonkeyRepository: IDataRepository {
                 })
                 .build()
 
-        googleRetrofit = Retrofit.Builder()
+        val googleRetrofit = Retrofit.Builder()
         .baseUrl("https://maps.googleapis.com/maps/api/place/textsearch/")
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -55,7 +52,7 @@ class CheapDonkeyRepository: IDataRepository {
 
         mSettings.taxiServices.forEach {
             if("Lyft" == it.name){
-                lyftRetrofit = Retrofit.Builder()
+                val lyftRetrofit = Retrofit.Builder()
                         .baseUrl(it.apiUrl)
                         .client(client)
                         .addConverterFactory(GsonConverterFactory.create())
@@ -65,7 +62,7 @@ class CheapDonkeyRepository: IDataRepository {
             }
 
             if("Uber" == it.name){
-                uberRetrofit = Retrofit.Builder()
+                val uberRetrofit = Retrofit.Builder()
                         .baseUrl(it.apiUrl)
                         .client(client)
                         .addConverterFactory(GsonConverterFactory.create())
@@ -92,11 +89,11 @@ class CheapDonkeyRepository: IDataRepository {
 
     override fun searchRides(request: SearchRidesRequest, callback: Callback<SearchRidesResponse>) {
         mRepositoryScheduler.execute(Runnable {
-            val lyftCall = lyftService.getRideEstimate(request.destinationLat.toFloat(), request.destinationLng.toFloat(), request.latitude.toFloat(), request.longitude.toFloat())
+            val lyftCall = lyftService.getRideEstimate(request.destinationLat.toFloat(), request.destinationLng.toFloat(), request.currentLat.toFloat(), request.currentLng.toFloat())
             val costEstimates = lyftCall.execute().body()
-            val uberCall = uberService.getRideEstimate(request.destinationLat.toFloat(), request.destinationLng.toFloat(), request.latitude.toFloat(), request.longitude.toFloat())
+            val uberCall = uberService.getRideEstimate(request.destinationLat.toFloat(), request.destinationLng.toFloat(), request.currentLat.toFloat(), request.currentLng.toFloat())
             val prices = uberCall.execute().body()
-            val domainDestination: SearchRidesResponse? = SearchRidesResponse(RideMapper().transform(costEstimates, prices))
+            val domainDestination: SearchRidesResponse? = SearchRidesResponse(RideMapper().transform(costEstimates?.rides, prices?.rides))
 
             if(domainDestination != null) callback.onSuccess(domainDestination) else callback.onFailure(WebServiceException(null))
         })

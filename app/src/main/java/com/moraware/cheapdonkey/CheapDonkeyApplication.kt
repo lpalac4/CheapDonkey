@@ -11,7 +11,7 @@ import dagger.Module
 import javax.inject.Inject
 
 @Module
-class CheapDonkeyApplication : Application() {
+open class CheapDonkeyApplication : Application() {
 
     lateinit var mApplicationComponent: ApplicationComponent
 

@@ -7,7 +7,7 @@ class RideMapper {
     fun transform(response: SearchRidesResponse): List<Ride> {
         var domainRides : ArrayList<Ride> = arrayListOf()
         response.rides.sortedBy { it.fare }.forEach {
-            domainRides.add(Ride(it.name, it.fare, it.company))
+            domainRides.add(Ride(it.name, it.fare, it.company, it.currency))
         }
 
         return domainRides

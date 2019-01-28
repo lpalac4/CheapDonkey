@@ -2,22 +2,22 @@ package com.moraware.domain.client
 
 import com.moraware.data.CheapDonkeyRepository
 import com.moraware.data.IDataRepository
+import com.moraware.data.models.ApplicationServices
 import com.moraware.domain.client.base.IUseCaseClient
 import com.moraware.domain.interactors.DomainResponse
 import com.moraware.domain.interactors.Either
 import com.moraware.domain.interactors.Failure
-import com.moraware.data.models.ApplicationServices
 import com.moraware.domain.usecase.base.BaseUseCase
 import kotlinx.coroutines.experimental.async
 import java.io.InputStream
 import java.util.logging.Logger
 import kotlin.coroutines.experimental.CoroutineContext
 
-class CheapDonkeyUseCaseClient: IUseCaseClient {
+open class CheapDonkeyUseCaseClient : IUseCaseClient {
 
     private lateinit var mCoroutineContext: CoroutineContext
 
-    constructor(){
+    init {
         DomainDependencyProvider.setDataRepository(CheapDonkeyRepository())
         DomainDependencyProvider.setLogger(Logger.getLogger("CheapDonkeyUseCaseClient"))
     }
@@ -34,11 +34,9 @@ class CheapDonkeyUseCaseClient: IUseCaseClient {
         mCoroutineContext.let {
             async(mCoroutineContext) {
                 useCase.setCallback(onResult)
+                useCase.setMainLooper(mCoroutineContext)
                 useCase.run()
             }
-//            launch(it) { onResult.invoke(job.await()) }
-//            val job = async(CommonPool) { useCase.run() }
-//            launch(it) { onResult.invoke(job.await()) }
         }
     }
 

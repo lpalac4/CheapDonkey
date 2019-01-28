@@ -69,7 +69,7 @@ class MainActivityViewModel : BaseViewModel() {
 
         taxiServices.value = response.taxiServices
         setTaxiServicesReadyForQuery(true)
-        getCurrentLocation()
+        updateCurrentLocationEvent.call()
     }
 
     private fun onRetrieveTaxiServicesFailure(failure: GetTaxiServicesFailure) {
@@ -84,14 +84,11 @@ class MainActivityViewModel : BaseViewModel() {
      */
 
     // this single live event will trigger the hardware check
-    val _getCurrentLocation: SingleLiveEvent<Unit> = SingleLiveEvent()
+    val updateCurrentLocationEvent: SingleLiveEvent<Unit> = SingleLiveEvent()
 
-    // this method will be called by the ui button
-    fun getCurrentLocation() {
-        _getCurrentLocation.call()
-    }
+    fun setCurrentLocation(location: Location?) {
+        mLocation = location
 
-    fun setCurrentLocation(mLocation: Location?) {
         if(mLocation == null) {
             mLogger.log(Level.FINE, "Current location unknown.")
             return
@@ -120,20 +117,24 @@ class MainActivityViewModel : BaseViewModel() {
 
     fun onFinalDestinationSelected(destination: String, latLng: LatLng) {
         mLogger.log(Level.FINE, "Searching for ride estimates.")
-        setSearchingRides(true)
 
         this.destination = destination
         this.destinationLatLng = latLng
+
+        updateCurrentLocationEvent.call()
     }
 
-    fun searchRides() {
+    fun searchRides() : Boolean {
         if(destination == "" || mLocation == null) {
             setErrorMessage("Cannot search rides without knowing destination and current location: \n destination: $destination \n location: $mLocation")
             mLogger.log(Level.FINE, "Cannot search rides without knowing destination and current location: \n destination: $destination \n location: $mLocation")
+            return false
         }
 
+        setSearchingRides(true)
         var useCase = SearchRidesUseCase(destination, destinationLatLng?.latitude, destinationLatLng?.longitude, mLocation?.latitude, mLocation?.longitude)
         mUseCaseClient.execute({ it.either(::onSearchRideEstimatesFailure, ::onSearchRideEstimatesSuccess)}, useCase)
+        return true
     }
 
     private fun onSearchRideEstimatesSuccess(response: SearchRides) {
@@ -145,5 +146,19 @@ class MainActivityViewModel : BaseViewModel() {
         setSearchingRides(false)
         setHasError(true)
         setErrorMessage("An error occurred retrieving rides.")
+    }
+
+    /**
+     * Start one of the apps by clicking on the thumbnails
+     */
+    val startUberAppCall: SingleLiveEvent<Unit> = SingleLiveEvent()
+    val startLyftAppCall: SingleLiveEvent<Unit> = SingleLiveEvent()
+
+    fun startUberApp() {
+        startUberAppCall.call()
+    }
+
+    fun startLyftApp() {
+        startLyftAppCall.call()
     }
 }

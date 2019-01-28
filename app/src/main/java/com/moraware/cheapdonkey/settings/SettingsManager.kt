@@ -2,7 +2,7 @@ package com.moraware.cheapdonkey.settings
 
 import android.content.SharedPreferences
 
-class SettingsManager : SharedPreferences {
+open class SettingsManager : SharedPreferences {
     override fun contains(key: String?): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

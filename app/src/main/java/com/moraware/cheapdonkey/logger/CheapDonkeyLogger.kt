@@ -3,7 +3,7 @@ package com.moraware.cheapdonkey.logger
 import java.util.logging.Level
 import java.util.logging.Logger
 
-class CheapDonkeyLogger(name: String, resourceBundleName: String?) : Logger(name, resourceBundleName) {
+open class CheapDonkeyLogger(name: String = "", resourceBundleName: String? = null) : Logger(name, resourceBundleName) {
 
     override fun log(level: Level?, msg: String?) {
         if(Level.SEVERE == level) {
