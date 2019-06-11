@@ -19,9 +19,9 @@ abstract class BaseViewModel : ViewModel(), Observable {
     @Inject
     lateinit var mLogger: CheapDonkeyLogger
 
-//    init {
-//        CheapDonkeyApplication.getInstance().getApplicationComponent().inject(this)
-//    }
+    init {
+        CheapDonkeyApplication.getInstance().getApplicationComponent().inject(this)
+    }
 
     @Transient private val mCallbacks: PropertyChangeRegistry = PropertyChangeRegistry()
 
